@@ -45,10 +45,31 @@ function App() {
     }
   };
 
+  const deleteAllDocuments = async () => {
+    if (!window.confirm("Tem certeza que deseja apagar todos os registros?")) {
+      return;
+    }
+
+    try {
+      const snapshot = await getDocs(listRef);
+      const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+
+      await Promise.all(deletePromises);
+
+      setRelatorios([]);
+      console.log("Todos os documentos foram deletados.");
+    } catch (error) {
+      console.error("Erro ao deletar todos os documentos: ", error);
+    }
+  };
+
 
   return (
     <>
       <h1>Documentos</h1>
+      <button onClick={deleteAllDocuments} style={{ marginBottom: '10px' }}>
+        Deletar Todos
+      </button>
       <ul>
         {relatorios.map(doc => (
           <li key={doc.id}>
